@@ -73,9 +73,10 @@ const ST=['Brouillon','En attente','Confirmée','En préparation','Prête','En l
 const FLOW=['En attente','Confirmée','En préparation','Prête','En livraison','Terminée'];
 const MET=['Espèces','Mobile Money','Virement'];
 const ic={home:'<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',ord:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>',cli:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',pro:'<path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/>'};
-const TABS=[['home','Accueil','home'],['ord','Commandes','ord'],['cli','Clients','cli'],['pro','Produits','pro']];
-let tab='home',q='',fs='',fp='';
-let db=load();
+ic.net='<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 11l7.6-4M8.2 13l7.6 4"/>';
+const TABS=[['home','Accueil','home'],['ord','Commandes','ord'],['cli','Clients','cli'],['pro','Produits','pro'],['net','Réseau','net']];
+let tab='home',q='',fs='',fp='',sub='mis';
+let db=load();['partners','couriers','missions'].forEach(k=>{db[k]=db[k]||[]});
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.orders)return d}catch(e){}
 return{n:0,products:[
 {id:'p1',name:'Poulet braisé',cat:'Plats',price:4500,on:true,desc:'Avec bananes plantain'},
@@ -100,7 +101,7 @@ function log(o,t){o.hist.unshift({t:Date.now(),m:t});o.upd=Date.now()}
 function nav(){const h=TABS.map(([k,l,i])=>`<button class="nb ${tab===k?'on':''}" onclick="go('${k}')" aria-label="${l}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ic[i]}</svg>${l}</button>`).join('');
 $('#bot').innerHTML=h;$('#side').innerHTML='<div class="logo">BISO <b>FLOW</b></div>'+h}
 function go(t){tab=t;q='';fs='';fp='';render()}
-function render(){nav();$('#main').innerHTML=({home:vHome,ord:vOrders,cli:vClients,pro:vProducts})[tab]();window.scrollTo(0,0)}
+function render(){nav();$('#main').innerHTML=({home:vHome,ord:vOrders,cli:vClients,pro:vProducts,net:vNet})[tab]();window.scrollTo(0,0)}
 /* --- accueil --- */
 function vHome(){const o=db.orders,c=s=>o.filter(x=>x.status===s).length;
 const ca=o.filter(x=>x.status!=='Annulée').reduce((a,x)=>a+paid(x),0);
@@ -110,6 +111,7 @@ return`<h1>Tableau de bord</h1><div class="grid">
 <div class="kpi hero"><small>Chiffre d’affaires encaissé</small><b>${fm(ca)}</b></div>
 <div class="kpi"><small>Commandes</small><b>${o.length}</b></div>
 <div class="kpi"><small>Paiements à recevoir</small><b>${fm(att)}</b></div>
+<div class="kpi"><small>Missions en cours</small><b>${db.missions.filter(m=>m.status==='Assignée'||m.status==='En cours').length}</b></div>
 ${['En attente','Confirmée','En préparation','En livraison','Terminée','Annulée'].map(s=>`<div class="kpi"><small>${s}</small><b>${c(s)}</b></div>`).join('')}</div>
 <h1 style="font-size:17px">Activité récente</h1>
 ${act.length?act.map(a=>`<div class="card row" onclick="openOrder('${a.id}')"><span>${esc(a.m)}<br><small>${a.r}</small></span><small>${fd(a.t)}</small></div>`).join(''):'<div class="empty">Aucune activité. Créez votre première commande.<br><br><button class="btn" onclick="go(\'ord\');newOrder()">Nouvelle commande</button></div>'}`}
@@ -158,11 +160,12 @@ ${o.fee?`<div class="line"><span>Frais</span>${fm(o.fee)}</div>`:''}${o.disc?`<d
 <div class="card"><div class="row" style="cursor:default"><b>Paiement</b>${pTag(ps)}</div>
 ${o.pays.map((p,k)=>`<div class="line" style="margin-top:8px"><span>${fm(p.amt)} · ${p.method}${p.ref?' · '+esc(p.ref):''}<br><small class="mu">${fd(p.t)}${p.ok?'':' · à vérifier'}</small></span>${p.ok?'':`<button class="btn s" onclick="okPay('${o.id}',${k})">Valider</button>`}</div>`).join('')}
 ${o.status!=='Annulée'&&rest>0?`<div class="two" style="margin-top:8px"><input id="pa" type="number" min="1" value="${rest}" aria-label="Montant"><select id="pm">${MET.map(m=>`<option>${m}</option>`).join('')}</select></div><input id="pr" placeholder="Référence transaction (facultatif)" style="margin-top:8px"><button class="btn s" style="margin-top:8px" onclick="addPay('${o.id}')">Enregistrer le paiement</button>`:''}</div>
+<div class="card"><b>Coordination</b><label>Partenaire responsable</label><select onchange="setPartner('${o.id}',this.value)"><option value="">— Aucun —</option>${db.partners.filter(p=>p.status==='Actif'||p.id===o.pid).map(p=>`<option value="${p.id}" ${o.pid===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>${missionBlock(o)}</div>
 <label>Notes internes</label><textarea rows="2" onchange="note('${o.id}',this.value)">${esc(o.notes)}</textarea>
 <div class="acts">${nx&&o.status!=='Annulée'?`<button class="btn" onclick="setSt('${o.id}','${nx}')">Passer à « ${nx} »</button>`:''}
 ${o.status!=='Annulée'&&o.status!=='Terminée'?`<button class="btn d" onclick="cancelO('${o.id}')">Annuler</button>`:''}<button class="btn g" onclick="closeM()">Fermer</button></div>
 <h1 style="font-size:15px;margin-top:18px">Historique</h1>${o.hist.map(h=>`<div class="hist">${esc(h.m)} <small>· ${fd(h.t)}</small></div>`).join('')}`)}
-function setSt(id,s){const o=db.orders.find(x=>x.id===id);log(o,`Statut : ${o.status} → ${s}`);o.status=s;save();render();openOrder(id)}
+function setSt(id,s){const o=db.orders.find(x=>x.id===id);if(s==='Annulée')db.missions.filter(m=>m.oid===id&&(m.status==='Assignée'||m.status==='En cours')).forEach(m=>m.status='Annulée');log(o,`Statut : ${o.status} → ${s}`);o.status=s;save();render();openOrder(id)}
 function cancelO(id){if(!confirm('Annuler cette commande ? Cette action est conservée dans l’historique.'))return;setSt(id,'Annulée')}
 function note(id,v){const o=db.orders.find(x=>x.id===id);o.notes=v;o.upd=Date.now();save()}
 function addPay(id){const o=db.orders.find(x=>x.id===id),amt=+$('#pa').value,m=$('#pm').value;
@@ -196,5 +199,49 @@ modal(`<h1>${id?'Modifier':'Nouveau produit'}</h1><label>Nom *</label><input id=
 <div class="acts"><button class="btn" onclick="saveP('${id||''}')">Enregistrer</button><button class="btn g" onclick="closeM()">Fermer</button></div>`)}
 function saveP(id){const n=$('#pn').value.trim(),pr=+$('#pp').value;if(!n||!(pr>=0)||$('#pp').value==='')return toast('Nom et prix obligatoires');
 let p=db.products.find(x=>x.id===id);if(!p){p={id:uid()};db.products.push(p)}Object.assign(p,{name:n,price:pr,cat:$('#pc').value.trim(),desc:$('#pd').value.trim(),on:$('#po').checked});save();closeM();render();toast('Produit enregistré')}
+
+/* --- réseau : partenaires, livreurs, missions --- */
+const MS=['Assignée','En cours','Terminée','Annulée'];
+function mTag(s){return`<span class="tag ${s==='Terminée'?'ok':s==='Annulée'?'x':s==='Assignée'?'w':''}">${s}</span>`}
+function vNet(){const S=[['par','Partenaires'],['liv','Livreurs'],['mis','Missions']];
+const seg=`<div class="bar">${S.map(([k,l])=>`<button class="btn s ${sub===k?'':'g'}" style="flex:1" onclick="sub='${k}';fs='';render()">${l}</button>`).join('')}</div>`;
+if(sub==='par')return`<div class="top"><h1>Partenaires</h1><button class="btn" onclick="editPar()">+ Partenaire</button></div>${seg}`+(db.partners.length?db.partners.map(p=>`<div class="card row" onclick="editPar('${p.id}')"><span><b>${esc(p.name)}</b><br><small>${esc(p.activity)||'Activité non précisée'}${p.phone?' · '+esc(p.phone):''}</small></span><span style="text-align:right"><span class="tag ${p.status==='Actif'?'ok':p.status==='En pause'?'w':'x'}">${p.status}</span><br><small>${db.orders.filter(o=>o.pid===p.id).length} commande(s)</small></span></div>`).join(''):'<div class="empty">Aucun partenaire. Ajoutez un restaurant, un fournisseur ou un prestataire.</div>');
+if(sub==='liv')return`<div class="top"><h1>Livreurs</h1><button class="btn" onclick="editCour()">+ Livreur</button></div>${seg}`+(db.couriers.length?db.couriers.map(c=>{const dn=db.missions.filter(m=>m.cid===c.id&&m.status==='Terminée'),due=dn.filter(m=>!m.fpaid).reduce((a,m)=>a+m.fee,0);return`<div class="card row" onclick="editCour('${c.id}')"><span><b>${esc(c.name)}</b> ${c.on?'':'<span class="tag x">Indisponible</span>'}<br><small>${esc(c.phone)}${c.zone?' · '+esc(c.zone):''}</small></span><span style="text-align:right"><b>${dn.length}</b> <small>terminée(s)</small><br><small>À payer : ${fm(due)}</small></span></div>`}).join(''):'<div class="empty">Aucun livreur. Ajoutez votre premier livreur pour affecter des missions.</div>');
+const l=db.missions.filter(m=>!fs||m.status===fs).sort((a,b)=>b.created-a.created);
+return`<div class="top"><h1>Missions</h1></div>${seg}<div class="bar"><select onchange="fs=this.value;render()" aria-label="Statut"><option value="">Tous statuts</option>${MS.map(s=>`<option ${fs===s?'selected':''}>${s}</option>`).join('')}</select></div>`+(l.length?l.map(m=>{const c=db.couriers.find(x=>x.id===m.cid);return`<div class="card row" onclick="openMission('${m.id}')"><span><b>${m.ref}</b> · ${esc(c?c.name:'—')}<br><small>${esc(m.name)} · ${fm(m.fee)}${m.fpaid?' · payée':''}</small></span>${mTag(m.status)}</div>`}).join(''):'<div class="empty">Aucune mission. Affectez un livreur depuis le détail d’une commande.</div>')}
+function editPar(id){const p=db.partners.find(x=>x.id===id)||{name:'',phone:'',activity:'',offer:'',rates:'',avail:'',status:'Actif',notes:''};
+modal(`<h1>${id?'Fiche partenaire':'Nouveau partenaire'}</h1><label>Nom *</label><input id="rn" value="${esc(p.name)}"><div class="two"><div><label>Téléphone</label><input id="rp" inputmode="tel" value="${esc(p.phone)}"></div><div><label>Activité</label><input id="ra" value="${esc(p.activity)}" placeholder="Restaurant, fournisseur…"></div></div><label>Produits ou services</label><input id="ro" value="${esc(p.offer)}"><div class="two"><div><label>Tarifs</label><input id="rr" value="${esc(p.rates)}"></div><div><label>Disponibilités</label><input id="rd" value="${esc(p.avail)}" placeholder="Lun–Sam, 8h–20h"></div></div><label>Statut de collaboration</label><select id="rs">${['Actif','En pause','Terminé'].map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select><label>Notes</label><textarea id="rt" rows="2">${esc(p.notes)}</textarea>
+<div class="acts"><button class="btn" onclick="savePar('${id||''}')">Enregistrer</button><button class="btn g" onclick="closeM()">Fermer</button></div>`)}
+function savePar(id){const n=$('#rn').value.trim();if(!n)return toast('Le nom est obligatoire');
+let p=db.partners.find(x=>x.id===id);if(!p){p={id:uid()};db.partners.push(p)}
+Object.assign(p,{name:n,phone:$('#rp').value.trim(),activity:$('#ra').value.trim(),offer:$('#ro').value.trim(),rates:$('#rr').value.trim(),avail:$('#rd').value.trim(),status:$('#rs').value,notes:$('#rt').value.trim()});save();closeM();render();toast('Partenaire enregistré')}
+function editCour(id){const c=db.couriers.find(x=>x.id===id)||{name:'',phone:'',zone:'',on:true,notes:''};const ms=id?db.missions.filter(m=>m.cid===id):[];
+modal(`<h1>${id?'Fiche livreur':'Nouveau livreur'}</h1><label>Nom *</label><input id="ln" value="${esc(c.name)}"><div class="two"><div><label>Téléphone *</label><input id="lp" inputmode="tel" value="${esc(c.phone)}"></div><div><label>Zone</label><input id="lz" value="${esc(c.zone)}" placeholder="Ex. Bacongo"></div></div><label>Notes</label><textarea id="lt" rows="2">${esc(c.notes)}</textarea>
+<label><input type="checkbox" id="lo" ${c.on?'checked':''} style="width:auto"> Disponible pour de nouvelles missions</label>
+<div class="acts"><button class="btn" onclick="saveCour('${id||''}')">Enregistrer</button><button class="btn g" onclick="closeM()">Fermer</button></div>
+${ms.length?`<h1 style="font-size:15px;margin-top:18px">Missions</h1>${ms.map(m=>`<div class="card row" onclick="openMission('${m.id}')"><span>${m.ref}<br><small>${fm(m.fee)}${m.fpaid?' · payée':''}</small></span>${mTag(m.status)}</div>`).join('')}`:''}`)}
+function saveCour(id){const n=$('#ln').value.trim(),p=$('#lp').value.trim();if(!n||!p)return toast('Nom et téléphone obligatoires');
+let c=db.couriers.find(x=>x.id===id);if(!c){c={id:uid()};db.couriers.push(c)}
+Object.assign(c,{name:n,phone:p,zone:$('#lz').value.trim(),notes:$('#lt').value.trim(),on:$('#lo').checked});save();closeM();render();toast('Livreur enregistré')}
+function missionBlock(o){const m=db.missions.find(x=>x.oid===o.id&&x.status!=='Annulée');
+if(m){const c=db.couriers.find(x=>x.id===m.cid);return`<div class="row" style="margin-top:10px" onclick="openMission('${m.id}')"><span>Livreur : <b>${esc(c?c.name:'—')}</b><br><small>Rémunération ${fm(m.fee)}</small></span>${mTag(m.status)}</div>`}
+if(o.status==='Annulée'||o.status==='Terminée')return'';
+const cs=db.couriers.filter(c=>c.on);
+return cs.length?`<label>Livreur</label><select id="mc">${cs.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><label>Rémunération (FCFA)</label><input id="mf" type="number" min="0" value="0"><button class="btn s" style="margin-top:8px" onclick="assign('${o.id}')">Affecter la mission</button>`:'<p class="mu">Ajoutez un livreur dans Réseau pour affecter une mission.</p>'}
+function setPartner(id,v){const o=db.orders.find(x=>x.id===id),p=db.partners.find(x=>x.id===v);o.pid=v;log(o,'Partenaire : '+(p?p.name:'aucun'));save();toast('Partenaire mis à jour')}
+function assign(id){const o=db.orders.find(x=>x.id===id),c=db.couriers.find(x=>x.id===$('#mc').value),fee=Math.max(0,+$('#mf').value||0);if(!c)return toast('Choisissez un livreur');
+db.missions.push({id:uid(),oid:o.id,ref:o.ref,name:o.name,addr:o.addr,cid:c.id,fee,status:'Assignée',fpaid:false,created:Date.now()});
+log(o,'Mission affectée à '+c.name);save();render();openOrder(id);toast('Mission affectée')}
+function openMission(id){const m=db.missions.find(x=>x.id===id);if(!m)return;const c=db.couriers.find(x=>x.id===m.cid),nx={'Assignée':'En cours','En cours':'Terminée'}[m.status];
+modal(`<div class="top"><h1>Mission ${m.ref}</h1>${mTag(m.status)}</div>
+<p><b>Livreur :</b> ${esc(c?c.name:'—')} ${c?`· <a href="tel:${esc(c.phone)}" style="color:var(--tqd)">${esc(c.phone)}</a>`:''}<br><b>Client :</b> ${esc(m.name)}<br><span class="mu">${esc(m.addr)||'Pas d’adresse'}</span></p>
+<div class="card"><div class="row" style="cursor:default"><b>Rémunération</b><span>${fm(m.fee)} <span class="tag ${m.fpaid?'ok':'w'}">${m.fpaid?'Payée':'À payer'}</span></span></div></div>
+<div class="acts">${nx?`<button class="btn" onclick="setMs('${m.id}','${nx}')">Passer à « ${nx} »</button>`:''}
+${m.status==='Terminée'&&!m.fpaid?`<button class="btn" onclick="payM('${m.id}')">Marquer la rémunération payée</button>`:''}
+${m.status==='Assignée'||m.status==='En cours'?`<button class="btn d" onclick="cancelM('${m.id}')">Annuler</button>`:''}
+${db.orders.some(o=>o.id===m.oid)?`<button class="btn g" onclick="openOrder('${m.oid}')">Voir la commande</button>`:''}<button class="btn g" onclick="closeM()">Fermer</button></div>`)}
+function setMs(id,s){const m=db.missions.find(x=>x.id===id),o=db.orders.find(x=>x.id===m.oid);m.status=s;if(s==='Terminée')m.done=Date.now();if(o)log(o,'Mission : '+s);save();render();openMission(id)}
+function payM(id){const m=db.missions.find(x=>x.id===id),o=db.orders.find(x=>x.id===m.oid);m.fpaid=true;if(o)log(o,'Rémunération livreur payée : '+fm(m.fee));save();render();openMission(id)}
+function cancelM(id){if(!confirm('Annuler cette mission ?'))return;setMs(id,'Annulée')}
 render();
 </script></body></html>
