@@ -1,37 +1,47 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BISO FLOW</title>
 <style>
-:root{padding-top:env(safe-area-inset-top,0px);--nav:#0B1F3A;--tq:#14B8A6;--tqd:#0d8f81;--bg:#EEF2F6;--sf:#fff;--tx:#0f1b2d;--mu:#5d6b80;--bd:#dde4ec;--rd:#d64545;--am:#b7791f}
-@media(prefers-color-scheme:dark){:root{--bg:#0a1424;--sf:#12223b;--tx:#e8eef7;--mu:#97a6bd;--bd:#25395a}}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);--nav:#0B1F3A;--nav2:#16305a;--tq:#14B8A6;--tqd:#0d8f81;--bg:#EEF2F6;--sf:#fff;--tx:#0f1b2d;--mu:#5d6b80;--bd:#dde4ec;--rd:#d64545;--am:#b7791f}
+@media(prefers-color-scheme:dark){:root{--bg:#0a1424;--sf:#12223b;--tx:#e8eef7;--mu:#97a6bd;--bd:#25395a;--nav:#06101f}}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45}
+html,body{margin:0;height:100%}
+body{font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45}
 button,input,select,textarea{font:inherit;color:inherit}
-.hd{background:var(--nav);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;flex-wrap:wrap}
-.logo{font-weight:800;letter-spacing:.5px}.logo b{color:var(--tq)}
-.hd .mu{color:#9fb2cf;font-size:13px}
-main{max-width:900px;margin:0 auto;padding:16px 16px 90px}
-.auth{max-width:380px;margin:0 auto;padding:40px 20px}.auth .logo{font-size:22px;color:var(--tx)}
-nav.bot{position:fixed;bottom:0;left:0;right:0;background:var(--nav);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
-nav.bot button{flex:1;background:none;border:0;color:#b9c7dd;padding:10px 2px;border-radius:10px;cursor:pointer;font-size:13px}
-nav.bot button.on{background:#16305a;color:#fff}
-h1{font-size:22px;margin:0 0 14px}
+:focus-visible{outline:2px solid var(--tq);outline-offset:2px}
+#app{display:flex;min-height:100%}
+aside{display:none;width:230px;background:var(--nav);color:#fff;padding:20px 14px;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+aside .logo{font-weight:800;font-size:19px;letter-spacing:.5px;padding:4px 10px 18px}
+.logo b{color:var(--tq)}
+.nb{display:flex;align-items:center;gap:10px;background:none;border:0;color:#b9c7dd;padding:11px 12px;border-radius:10px;cursor:pointer;text-align:left;width:100%}
+.nb.on{background:var(--nav2);color:#fff}
+.nb svg{width:20px;height:20px;flex:none}
+main{flex:1;min-width:0;padding:16px 16px 90px;max-width:980px;margin:0 auto;width:100%}
+nav.bot{position:fixed;bottom:0;left:0;right:0;background:var(--nav);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+nav.bot .nb{flex-direction:column;gap:2px;font-size:11px;justify-content:center;align-items:center;padding:6px 2px}
+@media(min-width:800px){aside{display:flex}nav.bot{display:none}main{padding:28px 32px}}
+h1{font-size:22px;margin:0 0 14px;letter-spacing:-.3px}
+.me{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;color:var(--mu);font-size:13px}
+.me select{width:auto;padding:6px 10px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.top h1{margin:0}
 .btn{background:var(--tq);color:#042a26;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
-.btn.g{background:var(--sf);color:var(--tx);border:1px solid var(--bd)}.btn.d{background:#fdecec;color:var(--rd)}.btn.s{padding:6px 11px;font-size:13px}
-.btn:disabled{opacity:.5}
+.btn:hover{background:#2dd4c2}.btn.g{background:var(--sf);color:var(--tx);border:1px solid var(--bd)}.btn.d{background:#fdecec;color:var(--rd)}.btn.s{padding:6px 11px;font-size:13px}.btn:disabled{opacity:.5}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
 @media(min-width:800px){.grid{grid-template-columns:repeat(4,1fr)}}
-.kpi,.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}
-.card{margin-bottom:10px}.kpi small,.mu,.row small{color:var(--mu)}.kpi b{display:block;font-size:22px}
+.kpi{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}
+.kpi small,.mu,.row small{color:var(--mu)}.kpi b{display:block;font-size:22px;margin-top:2px}
 .kpi.hero{grid-column:1/-1;background:var(--nav);color:#fff;border:0}.kpi.hero small{color:#9fb2cf}.kpi.hero b{font-size:30px;color:var(--tq)}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:10px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
 .tag{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:600;background:#e3ebf5;color:#27466e;white-space:nowrap}
 .tag.ok{background:#d6f5f0;color:#0b6b5f}.tag.w{background:#fdf0d5;color:var(--am)}.tag.x{background:#fdecec;color:var(--rd)}
+@media(prefers-color-scheme:dark){.tag{background:#1c3157;color:#b9d0f3}.tag.ok{background:#0f3d3a;color:#6ff0df}.tag.w{background:#3d3014;color:#f3c96b}.tag.x{background:#431b1b;color:#ff9a9a}}
+.bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}.bar input{flex:1;min-width:140px}.bar select{width:auto}
 input,select,textarea{width:100%;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
 label{display:block;font-size:13px;color:var(--mu);margin:10px 0 4px}
 .empty{text-align:center;color:var(--mu);padding:30px 10px}
+.auth{max-width:380px;margin:0 auto;padding:40px 20px}.auth .logo{font-size:22px}
 #ov{position:fixed;inset:0;background:rgba(5,12,24,.6);display:none;align-items:flex-end;justify-content:center;z-index:10}#ov.on{display:flex}
 #md{background:var(--sf);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}
 @media(min-width:800px){#ov{align-items:center}#md{border-radius:18px}}
@@ -54,13 +64,17 @@ const FL=['pending','confirmed','preparing','ready','delivering','completed'];
 const PS={unpaid:'Non payé',verifying:'En attente de vérification',paid:'Payé',partial:'Partiellement payé',refunded:'Remboursé',failed:'Échec'};
 const MT={cash:'Espèces',mobile_money:'Mobile Money',transfer:'Virement'};
 const RL={company_admin:'Administrateur',manager:'Gestionnaire',operator:'Opérateur',courier:'Livreur',customer:'Client'};
-const TABS=[['home','Accueil'],['ord','Commandes'],['cli','Clients'],['pro','Produits']];
-let U=null,C=null,R=null,tab='home',mode='in',ORD=[],q='',cart={},PRODS=[];
+const MST={assigned:'Assignée',in_progress:'En cours',completed:'Terminée',cancelled:'Annulée'};
+const PST={active:'Actif',paused:'En pause',ended:'Terminé'};
+const ic={home:'<path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/>',ord:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>',cli:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',pro:'<path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/>',net:'<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 11l7.6-4M8.2 13l7.6 4"/>',mis:'<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="18" r="1.5"/><circle cx="17" cy="18" r="1.5"/>'};
+let U=null,C=null,R=null,MEM=[],tab='home',sub='par',mode='in',q='',fs='',cart={},PRODS=[],ORD=[],PART=[],COUR=[];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fm=n=>new Intl.NumberFormat('fr-FR').format(Math.round(n))+' FCFA';
 const fd=t=>new Date(t).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-const mgr=()=>R==='company_admin'||R==='manager';
+const staff=()=>['company_admin','manager','operator'].includes(R),mgr=()=>R==='company_admin'||R==='manager',adm=()=>R==='company_admin';
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3500)}
 function modal(h){$('#md').innerHTML=h;$('#ov').classList.add('on')}
 function closeM(){$('#ov').classList.remove('on')}
@@ -68,16 +82,18 @@ $('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeM()});
 async function run(p){const{data,error}=await p;if(error){toast(error.message);return null}return data===null?true:data}
 const stTag=s=>`<span class="tag ${s==='completed'?'ok':s==='cancelled'?'x':s==='pending'?'w':''}">${OS[s]}</span>`;
 const pTag=s=>`<span class="tag ${s==='paid'?'ok':s==='unpaid'||s==='failed'?'x':'w'}">${PS[s]}</span>`;
-/* --- démarrage et connexion --- */
-SB.auth.onAuthStateChange((e,s)=>{U=s?s.user:null;setTimeout(boot,0)});
+const mTag=s=>`<span class="tag ${s==='completed'?'ok':s==='cancelled'?'x':s==='assigned'?'w':''}">${MST[s]}</span>`;
+/* --- connexion --- */
+SB.auth.onAuthStateChange((e,s)=>{const u=s?s.user:null,ch=(u&&u.id)!==(U&&U.id);U=u;if(ch)setTimeout(boot,0)});
 async function boot(){
  if(!U){C=null;return viewAuth()}
- const{data,error}=await SB.from('company_members').select('role,companies(id,name)').eq('user_id',U.id);
- if(error){toast(error.message);return}
- if(!data.length)return viewCreateCo();
- C=data[0].companies;R=data[0].role;shell();go(tab)}
+ const d=await run(SB.from('company_members').select('role,companies(id,name)').eq('user_id',U.id));
+ if(!d)return;MEM=d;if(!d.length)return viewNoCo();
+ const m=d.find(x=>x.companies.id===lsGet('bf-co'))||d[0];C=m.companies;R=m.role;
+ shell();tab=R==='courier'?'mis':'home';go(tab)}
+function pick(id){lsSet('bf-co',id);boot()}
 function viewAuth(){const up=mode==='up';
-$('#root').innerHTML=`<div class="auth"><div class="logo">BISO <b>FLOW</b></div><h1 style="margin-top:20px">${up?'Créer un compte':'Connexion'}</h1>
+ $('#root').innerHTML=`<div class="auth"><div class="logo">BISO <b>FLOW</b></div><h1 style="margin-top:20px">${up?'Créer un compte':'Connexion'}</h1>
 ${up?'<label>Nom complet</label><input id="an" autocomplete="name">':''}
 <label>E-mail</label><input id="ae" type="email" autocomplete="email">
 <label>Mot de passe (8 caractères minimum)</label><input id="ap" type="password" autocomplete="${up?'new-password':'current-password'}">
@@ -88,35 +104,46 @@ async function doAuth(){const email=$('#ae').value.trim(),password=$('#ap').valu
  b.disabled=true;
  if(mode==='up'){const{data,error}=await SB.auth.signUp({email,password,options:{data:{full_name:$('#an').value.trim()}}});
   b.disabled=false;if(error)return toast(error.message);
-  if(!data.session){toast('Compte créé. Confirmez votre e-mail (vérifiez les spams), puis connectez-vous.');mode='in';viewAuth()}}
+  if(!data.session){toast('Compte créé. Confirmez votre e-mail, puis connectez-vous.');mode='in';viewAuth()}}
  else{const{error}=await SB.auth.signInWithPassword({email,password});b.disabled=false;if(error)toast('Connexion impossible : '+error.message)}}
-function viewCreateCo(){$('#root').innerHTML=`<div class="auth"><div class="logo">BISO <b>FLOW</b></div><h1 style="margin-top:20px">Créer votre entreprise</h1><p class="mu">Vous en serez l’administrateur.</p><label>Nom de l’entreprise</label><input id="cn" value="YA BISO FOOD"><div class="acts"><button class="btn" onclick="createCo()">Créer</button><button class="btn g" onclick="SB.auth.signOut()">Quitter</button></div></div>`}
+function viewNoCo(){$('#root').innerHTML=`<div class="auth"><div class="logo">BISO <b>FLOW</b></div><h1 style="margin-top:20px">Bienvenue</h1>
+<div class="card"><b>Vous avez été invité ?</b><p class="mu">Donnez votre e-mail <b>${esc(U.email)}</b> à l’administrateur de l’entreprise, puis rechargez.</p><button class="btn g" onclick="boot()">Recharger</button></div>
+<div class="card"><b>Créer une nouvelle entreprise</b><label>Nom</label><input id="cn" value="YA BISO FOOD"><div class="acts"><button class="btn" onclick="createCo()">Créer</button></div></div>
+<button class="btn g" onclick="SB.auth.signOut()">Quitter</button></div>`}
 async function createCo(){if(await run(SB.rpc('create_company',{p_name:$('#cn').value})))boot()}
-function shell(){$('#root').innerHTML=`<header class="hd"><span class="logo">BISO <b>FLOW</b></span><span class="mu">${esc(C.name)} · ${RL[R]}</span><button class="btn g s" onclick="SB.auth.signOut()">Quitter</button></header><main id="main"></main><nav class="bot" id="bot"></nav>`}
-async function go(t){tab=t;q='';
- $('#bot').innerHTML=TABS.map(([k,l])=>`<button class="${tab===k?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
- $('#main').innerHTML='<div class="empty">Chargement…</div>';
- $('#main').innerHTML=await({home:vHome,ord:vOrders,cli:vClients,pro:vProducts})[t]();window.scrollTo(0,0)}
+/* --- structure --- */
+function tabs(){return R==='courier'?[['mis','Missions','mis']]:R==='customer'?[]:[['home','Accueil','home'],['ord','Commandes','ord'],['cli','Clients','cli'],['pro','Produits','pro'],['net','Réseau','net']]}
+function shell(){$('#root').innerHTML='<div id="app"><aside id="side"></aside><main id="main"></main></div><nav class="bot" id="bot"></nav>'}
+function nav(){const h=tabs().map(([k,l,i])=>`<button class="nb ${tab===k?'on':''}" onclick="go('${k}')" aria-label="${l}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ic[i]}</svg>${l}</button>`).join('');
+ $('#bot').innerHTML=h;$('#side').innerHTML='<div class="logo">BISO <b>FLOW</b></div>'+h}
+function meBar(){return`<div class="me"><span><b>${esc(C.name)}</b> · ${RL[R]}</span><span>${MEM.length>1?`<select onchange="pick(this.value)" aria-label="Entreprise">${MEM.map(m=>`<option value="${m.companies.id}" ${m.companies.id===C.id?'selected':''}>${esc(m.companies.name)}</option>`).join('')}</select> `:''}<button class="btn g s" onclick="SB.auth.signOut()">Quitter</button></span></div>`}
+async function go(t){tab=t;q='';nav();
+ if(R==='customer'){$('#main').innerHTML=meBar()+'<div class="empty">L’espace client arrive bientôt.</div>';return}
+ $('#main').innerHTML=meBar()+'<div class="empty">Chargement…</div>';
+ const h=await({home:vHome,ord:vOrders,cli:vClients,pro:vProducts,net:vNet,mis:vMissions})[t]();
+ $('#main').innerHTML=meBar()+h;window.scrollTo(0,0)}
 /* --- accueil --- */
 async function vHome(){
- const[o,p]=await Promise.all([run(SB.from('orders').select('id,status,total')),run(SB.from('payments').select('order_id,amount,status').eq('status','confirmed'))]);
+ const[o,p,m,h]=await Promise.all([run(SB.from('orders').select('id,status,total')),run(SB.from('payments').select('order_id,amount').eq('status','confirmed')),run(SB.from('missions').select('status')),run(SB.from('order_history').select('message,created_at,order_id,orders(ref)').order('created_at',{ascending:false}).limit(8))]);
  if(!o)return'<div class="empty">Données indisponibles.</div>';
  const live=o.filter(x=>x.status!=='cancelled'),ids=new Set(live.map(x=>x.id));
  const enc=(p||[]).filter(x=>ids.has(x.order_id)).reduce((a,x)=>a+ +x.amount,0);
- const due=live.reduce((a,x)=>a+ +x.total,0)-enc,c=s=>o.filter(x=>x.status===s).length;
+ const due=Math.max(0,live.reduce((a,x)=>a+ +x.total,0)-enc),c=s=>o.filter(x=>x.status===s).length;
+ const mc=(m||[]).filter(x=>x.status==='assigned'||x.status==='in_progress').length;
  return`<h1>Tableau de bord</h1><div class="grid"><div class="kpi hero"><small>Chiffre d’affaires encaissé</small><b>${fm(enc)}</b></div>
-<div class="kpi"><small>Commandes</small><b>${o.length}</b></div><div class="kpi"><small>Paiements à recevoir</small><b>${fm(Math.max(0,due))}</b></div>
-${['pending','confirmed','preparing','delivering','completed','cancelled'].map(s=>`<div class="kpi"><small>${OS[s]}</small><b>${c(s)}</b></div>`).join('')}</div>`}
+<div class="kpi"><small>Commandes</small><b>${o.length}</b></div><div class="kpi"><small>Paiements à recevoir</small><b>${fm(due)}</b></div>
+<div class="kpi"><small>Missions en cours</small><b>${mc}</b></div>
+${['pending','confirmed','preparing','delivering','completed','cancelled'].map(s=>`<div class="kpi"><small>${OS[s]}</small><b>${c(s)}</b></div>`).join('')}</div>
+<h1 style="font-size:17px">Activité récente</h1>`+(h&&h.length?h.map(a=>`<div class="card row" onclick="openOrder('${a.order_id}')"><span>${esc(a.message)}<br><small>${esc(a.orders?a.orders.ref:'')}</small></span><small>${fd(a.created_at)}</small></div>`).join(''):'<div class="empty">Aucune activité.</div>')}
 /* --- commandes --- */
 async function vOrders(){
- const d=await run(SB.from('orders').select('id,ref,customer_name,phone,total,status,pay_status,created_at').order('created_at',{ascending:false}).limit(300));
- ORD=d||[];
+ ORD=(await run(SB.from('orders').select('id,ref,customer_name,phone,total,status,pay_status,created_at').order('created_at',{ascending:false}).limit(300)))||[];
  return`<div class="top"><h1>Commandes</h1><button class="btn" onclick="newOrder()">+ Nouvelle</button></div><input placeholder="Rechercher (référence, nom, téléphone)" oninput="q=this.value;$('#ol').innerHTML=oList()" aria-label="Rechercher" style="margin-bottom:12px"><div id="ol">${oList()}</div>`}
 function oList(){const l=ORD.filter(o=>!q||(o.ref+o.customer_name+o.phone).toLowerCase().includes(q.toLowerCase()));
  return l.length?l.map(o=>`<div class="card row" onclick="openOrder('${o.id}')"><span><b>${esc(o.ref)}</b> · ${esc(o.customer_name)}<br><small>${fd(o.created_at)} · ${fm(o.total)}</small></span><span style="text-align:right">${stTag(o.status)}<br>${pTag(o.pay_status)}</span></div>`).join(''):'<div class="empty">Aucune commande.</div>'}
 async function newOrder(){cart={};PRODS=(await run(SB.from('products').select('id,name,price').eq('active',true).eq('archived',false).order('name')))||[];
  modal(`<h1>Nouvelle commande</h1><div class="two"><div><label>Nom *</label><input id="on"></div><div><label>Téléphone *</label><input id="op" inputmode="tel"></div></div><label>Adresse</label><input id="oa">
-<label>Produits</label>${PRODS.length?PRODS.map(p=>`<div class="line"><span>${esc(p.name)}<br><small class="mu">${fm(p.price)}</small></span><button class="btn g s" onclick="qty('${p.id}',-1)">−</button><input id="q${p.id}" value="0" readonly><button class="btn g s" onclick="qty('${p.id}',1)">+</button></div>`).join(''):'<p class="mu">Ajoutez d’abord des produits actifs (onglet Produits).</p>'}
+<label>Produits</label>${PRODS.length?PRODS.map(p=>`<div class="line"><span>${esc(p.name)}<br><small class="mu">${fm(p.price)}</small></span><button class="btn g s" onclick="qty('${p.id}',-1)">−</button><input id="q${p.id}" value="0" readonly aria-label="Quantité"><button class="btn g s" onclick="qty('${p.id}',1)">+</button></div>`).join(''):'<p class="mu">Ajoutez d’abord des produits actifs (onglet Produits).</p>'}
 <div class="two"><div><label>Frais</label><input id="of" type="number" min="0" value="0" oninput="tt()"></div><div><label>Réduction</label><input id="od" type="number" min="0" value="0" oninput="tt()"></div></div>
 <label>Notes internes</label><textarea id="ono" rows="2"></textarea><div class="tot" id="tt">0 FCFA</div>
 <div class="acts"><button class="btn" id="sb" onclick="saveOrder()">Créer la commande</button><button class="btn g" onclick="closeM()">Annuler</button></div>`)}
@@ -128,9 +155,19 @@ async function saveOrder(){const items=PRODS.filter(p=>cart[p.id]>0).map(p=>({pr
  if(!r){$('#sb').disabled=false;return}
  closeM();toast('Commande créée');go('ord')}
 async function openOrder(id){
- const[o,it,pa,hi]=await Promise.all([run(SB.from('orders').select('*').eq('id',id).single()),run(SB.from('order_items').select('name,unit_price,qty').eq('order_id',id)),run(SB.from('payments').select('*').eq('order_id',id).order('created_at')),run(SB.from('order_history').select('message,created_at').eq('order_id',id).order('created_at',{ascending:false}))]);
+ const[o,it,pa,hi,ms,pt,cs]=await Promise.all([
+  run(SB.from('orders').select('*').eq('id',id).single()),
+  run(SB.from('order_items').select('name,unit_price,qty').eq('order_id',id)),
+  run(SB.from('payments').select('*').eq('order_id',id).order('created_at')),
+  run(SB.from('order_history').select('message,created_at').eq('order_id',id).order('created_at',{ascending:false})),
+  run(SB.from('missions').select('id,status,fee,couriers(name)').eq('order_id',id).neq('status','cancelled')),
+  run(SB.from('partners').select('id,name,status').eq('archived',false).order('name')),
+  run(SB.from('couriers').select('id,name').eq('available',true).eq('archived',false).order('name'))]);
  if(!o)return;
- const i=FL.indexOf(o.status),nx=i>=0&&i<FL.length-1?FL[i+1]:null,used=(pa||[]).filter(x=>x.status!=='failed'&&x.status!=='refunded').reduce((a,x)=>a+ +x.amount,0),rest=o.total-used,open=o.status!=='cancelled';
+ const i=FL.indexOf(o.status),nx=i>=0&&i<FL.length-1?FL[i+1]:null,used=(pa||[]).filter(x=>x.status!=='failed'&&x.status!=='refunded').reduce((a,x)=>a+ +x.amount,0),rest=o.total-used,open=o.status!=='cancelled',m=ms&&ms[0];
+ const coord=`<div class="card"><b>Coordination</b><label>Partenaire responsable</label><select onchange="setPartner('${id}',this.value)" ${open?'':'disabled'}><option value="">— Aucun —</option>${(pt||[]).filter(p=>p.status==='active'||p.id===o.partner_id).map(p=>`<option value="${p.id}" ${o.partner_id===p.id?'selected':''}>${esc(p.name)}</option>`).join('')}</select>`+
+  (m?`<div class="row" style="margin-top:10px" onclick="openMission('${m.id}')"><span>Livreur : <b>${esc(m.couriers?m.couriers.name:'—')}</b><br><small>Rémunération ${fm(m.fee)}</small></span>${mTag(m.status)}</div>`:
+  (open&&o.status!=='completed'?((cs&&cs.length)?`<label>Livreur</label><select id="mc">${cs.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select><label>Rémunération (FCFA)</label><input id="mf" type="number" min="0" value="0"><button class="btn s" style="margin-top:8px" onclick="assign('${id}')">Affecter la mission</button>`:'<p class="mu">Ajoutez un livreur dans Réseau pour affecter une mission.</p>'):''))+'</div>';
  modal(`<div class="top"><h1>${esc(o.ref)}</h1>${stTag(o.status)}</div>
 <p><b>${esc(o.customer_name)}</b> · <a href="tel:${esc(o.phone)}" style="color:var(--tqd)">${esc(o.phone)}</a><br><span class="mu">${esc(o.address)||'Pas d’adresse'}</span></p>
 ${(it||[]).map(x=>`<div class="line"><span>${x.qty} × ${esc(x.name)}</span><b>${fm(x.unit_price*x.qty)}</b></div>`).join('')}
@@ -139,15 +176,18 @@ ${+o.fee?`<div class="line"><span>Frais</span>${fm(o.fee)}</div>`:''}${+o.discou
 <div class="card"><div class="row" style="cursor:default"><b>Paiement</b>${pTag(o.pay_status)}</div>
 ${(pa||[]).map(p=>`<div class="line" style="margin-top:8px"><span>${fm(p.amount)} · ${MT[p.method]}${p.reference?' · '+esc(p.reference):''}<br><small class="mu">${fd(p.created_at)} · ${p.status==='pending'?'à vérifier':p.status==='confirmed'?'confirmé':'refusé'}</small></span>${p.status==='pending'&&mgr()?`<button class="btn s" onclick="rev('${p.id}',true,'${id}')">Valider</button><button class="btn d s" onclick="rev('${p.id}',false,'${id}')">Refuser</button>`:''}</div>`).join('')}
 ${open&&rest>0?`<div class="two" style="margin-top:8px"><input id="pa" type="number" min="1" value="${rest}" aria-label="Montant"><select id="pm"><option value="cash">Espèces</option><option value="mobile_money">Mobile Money</option><option value="transfer">Virement</option></select></div><input id="pr" placeholder="Référence transaction (facultatif)" style="margin-top:8px"><button class="btn s" style="margin-top:8px" onclick="addPay('${id}')">Enregistrer le paiement</button>`:''}</div>
+${coord}
 <div class="acts">${nx?`<button class="btn" onclick="setSt('${id}','${nx}')">Passer à « ${OS[nx]} »</button>`:''}${open&&o.status!=='completed'?`<button class="btn d" onclick="if(confirm('Annuler cette commande ?'))setSt('${id}','cancelled')">Annuler</button>`:''}<button class="btn g" onclick="closeM()">Fermer</button></div>
 <h1 style="font-size:15px;margin-top:18px">Historique</h1>${(hi||[]).map(h=>`<div class="hist">${esc(h.message)} <small>· ${fd(h.created_at)}</small></div>`).join('')}`)}
-async function setSt(id,s){if(await run(SB.rpc('set_order_status',{p_order:id,p_status:s}))){openOrder(id);if(tab==='ord')go('ord')}}
-async function addPay(id){if(await run(SB.rpc('add_payment',{p_order:id,p_amount:+$('#pa').value,p_method:$('#pm').value,p_reference:$('#pr').value}))){openOrder(id);if(tab==='ord')go('ord')}}
-async function rev(pid,ok,id){if(await run(SB.rpc('confirm_payment',{p_payment:pid,p_ok:ok}))){openOrder(id);if(tab==='ord')go('ord')}}
-/* --- clients --- */
+function refresh(id){openOrder(id);if(tab==='ord')go('ord')}
+async function setSt(id,s){if(await run(SB.rpc('set_order_status',{p_order:id,p_status:s})))refresh(id)}
+async function addPay(id){if(await run(SB.rpc('add_payment',{p_order:id,p_amount:+$('#pa').value,p_method:$('#pm').value,p_reference:$('#pr').value})))refresh(id)}
+async function rev(pid,ok,id){if(await run(SB.rpc('confirm_payment',{p_payment:pid,p_ok:ok})))refresh(id)}
+async function setPartner(id,v){if(await run(SB.rpc('set_order_partner',{p_order:id,p_partner:v||null}))){toast('Partenaire mis à jour');openOrder(id)}}
+async function assign(id){if(await run(SB.rpc('assign_mission',{p_order:id,p_courier:$('#mc').value,p_fee:+$('#mf').value||0}))){toast('Mission affectée');openOrder(id)}}
+/* --- clients et produits --- */
 async function vClients(){const d=await run(SB.from('customers').select('name,phone,address').eq('archived',false).order('name'));
  return`<h1>Clients</h1>`+(d&&d.length?d.map(c=>`<div class="card"><b>${esc(c.name)}</b><br><small class="mu">${esc(c.phone)}${c.address?' · '+esc(c.address):''}</small></div>`).join(''):'<div class="empty">Aucun client. Ils sont ajoutés automatiquement à chaque commande.</div>')}
-/* --- produits --- */
 async function vProducts(){PRODS=(await run(SB.from('products').select('*').eq('archived',false).order('name')))||[];
  return`<div class="top"><h1>Produits et services</h1>${mgr()?'<button class="btn" onclick="editP()">+ Produit</button>':''}</div>`+(PRODS.length?PRODS.map(p=>`<div class="card row" ${mgr()?`onclick="editP('${p.id}')"`:''}><span><b>${esc(p.name)}</b><br><small>${esc(p.category)||'Sans catégorie'}</small></span><span style="text-align:right"><b>${fm(p.price)}</b><br><span class="tag ${p.active?'ok':'x'}">${p.active?'Disponible':'Désactivé'}</span></span></div>`).join(''):'<div class="empty">Aucun produit. Ajoutez votre premier produit.</div>')}
 function editP(id){const p=PRODS.find(x=>x.id===id)||{name:'',category:'',price:'',active:true,description:''};
@@ -159,4 +199,59 @@ async function saveP(id){const v={name:$('#pn').value.trim(),price:+$('#pp').val
  const r=id?await run(SB.from('products').update(v).eq('id',id)):await run(SB.from('products').insert({...v,company_id:C.id}));
  if(r){closeM();toast('Produit enregistré');go('pro')}}
 async function archP(id){if(confirm('Archiver ce produit ?')&&await run(SB.from('products').update({archived:true}).eq('id',id))){closeM();go('pro')}}
+/* --- réseau --- */
+async function vNet(){const S=[['par','Partenaires'],['liv','Livreurs'],['mis','Missions']];if(adm())S.push(['eq','Équipe']);
+ if(!S.some(x=>x[0]===sub))sub='par';
+ const seg=`<div class="bar">${S.map(([k,l])=>`<button class="btn s ${sub===k?'':'g'}" style="flex:1" onclick="sub='${k}';fs='';go('net')">${l}</button>`).join('')}</div>`;
+ return`<h1>Réseau</h1>`+seg+await({par:bPar,liv:bLiv,mis:mBody,eq:bEq})[sub]()}
+async function bPar(){const[p,o]=await Promise.all([run(SB.from('partners').select('*').eq('archived',false).order('name')),run(SB.from('orders').select('partner_id').not('partner_id','is',null))]);
+ PART=p||[];const n={};(o||[]).forEach(x=>n[x.partner_id]=(n[x.partner_id]||0)+1);
+ return`<div class="top"><b>Partenaires et fournisseurs</b>${mgr()?'<button class="btn s" onclick="editPar()">+ Partenaire</button>':''}</div>`+(PART.length?PART.map(p=>`<div class="card row" ${mgr()?`onclick="editPar('${p.id}')"`:''}><span><b>${esc(p.name)}</b><br><small>${esc(p.activity)||'Activité non précisée'}${p.phone?' · '+esc(p.phone):''}</small></span><span style="text-align:right"><span class="tag ${p.status==='active'?'ok':p.status==='paused'?'w':'x'}">${PST[p.status]}</span><br><small>${n[p.id]||0} commande(s)</small></span></div>`).join(''):'<div class="empty">Aucun partenaire. Ajoutez un restaurant, un fournisseur ou un prestataire.</div>')}
+function editPar(id){const p=PART.find(x=>x.id===id)||{name:'',phone:'',activity:'',offer:'',rates:'',availability:'',status:'active',notes:''};
+ modal(`<h1>${id?'Fiche partenaire':'Nouveau partenaire'}</h1><label>Nom *</label><input id="rn" value="${esc(p.name)}"><div class="two"><div><label>Téléphone</label><input id="rp" inputmode="tel" value="${esc(p.phone)}"></div><div><label>Activité</label><input id="ra" value="${esc(p.activity)}" placeholder="Restaurant, fournisseur…"></div></div><label>Produits ou services</label><input id="ro" value="${esc(p.offer)}"><div class="two"><div><label>Tarifs</label><input id="rr" value="${esc(p.rates)}"></div><div><label>Disponibilités</label><input id="rd" value="${esc(p.availability)}" placeholder="Lun–Sam, 8h–20h"></div></div><label>Statut de collaboration</label><select id="rs">${Object.entries(PST).map(([k,l])=>`<option value="${k}" ${p.status===k?'selected':''}>${l}</option>`).join('')}</select><label>Notes</label><textarea id="rt" rows="2">${esc(p.notes)}</textarea>
+<div class="acts"><button class="btn" onclick="savePar('${id||''}')">Enregistrer</button>${id?`<button class="btn d" onclick="archPar('${id}')">Archiver</button>`:''}<button class="btn g" onclick="closeM()">Fermer</button></div>`)}
+async function savePar(id){const v={name:$('#rn').value.trim(),phone:$('#rp').value.trim(),activity:$('#ra').value.trim(),offer:$('#ro').value.trim(),rates:$('#rr').value.trim(),availability:$('#rd').value.trim(),status:$('#rs').value,notes:$('#rt').value.trim()};
+ if(!v.name)return toast('Le nom est obligatoire');
+ const r=id?await run(SB.from('partners').update(v).eq('id',id)):await run(SB.from('partners').insert({...v,company_id:C.id}));
+ if(r){closeM();toast('Partenaire enregistré');go('net')}}
+async function archPar(id){if(confirm('Archiver ce partenaire ?')&&await run(SB.from('partners').update({archived:true}).eq('id',id))){closeM();go('net')}}
+async function bLiv(){const[c,m]=await Promise.all([run(SB.from('couriers').select('*').eq('archived',false).order('name')),run(SB.from('missions').select('courier_id,status,fee,fee_paid'))]);
+ COUR=c||[];
+ return`<div class="top"><b>Livreurs et prestataires</b>${mgr()?'<button class="btn s" onclick="editCour()">+ Livreur</button>':''}</div>`+(COUR.length?COUR.map(c=>{const dn=(m||[]).filter(x=>x.courier_id===c.id&&x.status==='completed'),due=dn.filter(x=>!x.fee_paid).reduce((a,x)=>a+ +x.fee,0);
+  return`<div class="card row" ${mgr()?`onclick="editCour('${c.id}')"`:''}><span><b>${esc(c.name)}</b> ${c.available?'':'<span class="tag x">Indisponible</span>'}<br><small>${esc(c.phone)}${c.zone?' · '+esc(c.zone):''}</small></span><span style="text-align:right"><b>${dn.length}</b> <small>terminée(s)</small><br><small>À payer : ${fm(due)}</small></span></div>`}).join(''):'<div class="empty">Aucun livreur. Ajoutez votre premier livreur pour affecter des missions.</div>')}
+function editCour(id){const c=COUR.find(x=>x.id===id)||{name:'',phone:'',zone:'',available:true,notes:'',user_id:null};
+ modal(`<h1>${id?'Fiche livreur':'Nouveau livreur'}</h1><label>Nom *</label><input id="ln" value="${esc(c.name)}"><div class="two"><div><label>Téléphone *</label><input id="lp" inputmode="tel" value="${esc(c.phone)}"></div><div><label>Zone</label><input id="lz" value="${esc(c.zone)}" placeholder="Ex. Bacongo"></div></div><label>Notes</label><textarea id="lt" rows="2">${esc(c.notes)}</textarea>
+<label><input type="checkbox" id="lo" ${c.available?'checked':''} style="width:auto"> Disponible pour de nouvelles missions</label>
+<div class="acts"><button class="btn" onclick="saveCour('${id||''}')">Enregistrer</button>${id?`<button class="btn d" onclick="archCour('${id}')">Archiver</button>`:''}<button class="btn g" onclick="closeM()">Fermer</button></div>
+${id?`<div class="card" style="margin-top:14px"><b>Compte de connexion</b> ${c.user_id?'<span class="tag ok">Lié</span>':'<span class="tag w">Non lié</span>'}<p class="mu">Le livreur crée son compte, vous l’ajoutez dans Équipe avec le rôle Livreur, puis vous liez son e-mail ici.</p><input id="lk" type="email" placeholder="E-mail du livreur"><button class="btn s" style="margin-top:8px" onclick="linkC('${id}')">Lier ce compte</button></div>`:''}`)}
+async function saveCour(id){const v={name:$('#ln').value.trim(),phone:$('#lp').value.trim(),zone:$('#lz').value.trim(),notes:$('#lt').value.trim(),available:$('#lo').checked};
+ if(!v.name||!v.phone)return toast('Nom et téléphone obligatoires');
+ const r=id?await run(SB.from('couriers').update(v).eq('id',id)):await run(SB.from('couriers').insert({...v,company_id:C.id}));
+ if(r){closeM();toast('Livreur enregistré');go('net')}}
+async function archCour(id){if(confirm('Archiver ce livreur ?')&&await run(SB.from('couriers').update({archived:true}).eq('id',id))){closeM();go('net')}}
+async function linkC(id){if(await run(SB.rpc('link_courier',{p_courier:id,p_email:$('#lk').value}))){toast('Compte lié');closeM();go('net')}}
+/* --- missions --- */
+async function vMissions(){return`<h1>Mes missions</h1>`+await mBody()}
+async function mBody(){const d=await run(SB.from('missions').select('id,status,fee,fee_paid,created_at,couriers(name),orders(ref,customer_name)').order('created_at',{ascending:false}).limit(200));
+ const l=(d||[]).filter(m=>!fs||m.status===fs);
+ return`<div class="bar"><select onchange="fs=this.value;go(tab)" aria-label="Statut"><option value="">Tous statuts</option>${Object.entries(MST).map(([k,v])=>`<option value="${k}" ${fs===k?'selected':''}>${v}</option>`).join('')}</select></div>`+
+ (l.length?l.map(m=>`<div class="card row" onclick="openMission('${m.id}')"><span><b>${esc(m.orders?m.orders.ref:'')}</b> · ${esc(m.couriers?m.couriers.name:'—')}<br><small>${esc(m.orders?m.orders.customer_name:'')} · ${fm(m.fee)}${m.fee_paid?' · payée':''}</small></span>${mTag(m.status)}</div>`).join(''):'<div class="empty">Aucune mission.</div>')}
+async function openMission(id){const m=await run(SB.from('missions').select('*,couriers(name,phone),orders(ref,customer_name,phone,address)').eq('id',id).single());if(!m)return;
+ const nx={assigned:'in_progress',in_progress:'completed'}[m.status],o=m.orders||{},c=m.couriers||{};
+ modal(`<div class="top"><h1>Mission ${esc(o.ref||'')}</h1>${mTag(m.status)}</div>
+<p><b>Livreur :</b> ${esc(c.name||'—')}<br><b>Client :</b> ${esc(o.customer_name||'')} · <a href="tel:${esc(o.phone||'')}" style="color:var(--tqd)">${esc(o.phone||'')}</a><br><span class="mu">${esc(o.address)||'Pas d’adresse'}</span></p>
+<div class="card"><div class="row" style="cursor:default"><b>Rémunération</b><span>${fm(m.fee)} <span class="tag ${m.fee_paid?'ok':'w'}">${m.fee_paid?'Payée':'À payer'}</span></span></div></div>
+<div class="acts">${nx?`<button class="btn" onclick="setMs('${id}','${nx}')">Passer à « ${MST[nx]} »</button>`:''}
+${m.status==='completed'&&!m.fee_paid&&mgr()?`<button class="btn" onclick="payM('${id}')">Marquer la rémunération payée</button>`:''}
+${(m.status==='assigned'||m.status==='in_progress')&&staff()?`<button class="btn d" onclick="if(confirm('Annuler cette mission ?'))setMs('${id}','cancelled')">Annuler</button>`:''}
+${staff()?`<button class="btn g" onclick="openOrder('${m.order_id}')">Voir la commande</button>`:''}<button class="btn g" onclick="closeM()">Fermer</button></div>`)}
+async function setMs(id,s){if(await run(SB.rpc('set_mission_status',{p_mission:id,p_status:s}))){closeM();toast('Mission mise à jour');go(tab)}}
+async function payM(id){if(await run(SB.rpc('pay_mission_fee',{p_mission:id}))){closeM();toast('Rémunération enregistrée');go(tab)}}
+/* --- équipe --- */
+async function bEq(){const d=await run(SB.rpc('list_members',{p_company:C.id}));
+ return`<div class="card"><b>Ajouter un membre</b><p class="mu">La personne doit d’abord créer son compte sur cette page avec son e-mail.</p><input id="me" type="email" placeholder="E-mail de la personne"><label>Rôle</label><select id="mr"><option value="manager">Gestionnaire</option><option value="operator">Opérateur</option><option value="courier">Livreur</option><option value="company_admin">Administrateur</option></select><button class="btn s" style="margin-top:8px" onclick="addMember()">Ajouter</button></div>`+
+ (d||[]).map(x=>`<div class="card"><div class="row" style="cursor:default"><span><b>${esc(x.out_name||'Sans nom')}</b><br><small>${esc(x.out_email)}</small></span>${x.out_user===U.id?`<span class="tag ok">${RL[x.out_role]} (vous)</span>`:`<select style="width:auto" onchange="setRole('${x.out_user}',this.value)">${Object.keys(RL).map(k=>`<option value="${k}" ${x.out_role===k?'selected':''}>${RL[k]}</option>`).join('')}</select>`}</span>${x.out_user===U.id?'':`<div class="acts"><button class="btn d s" onclick="rmMember('${x.out_user}')">Retirer</button></div>`}</div>`).join('')}
+async function addMember(){if(await run(SB.rpc('add_member',{p_company:C.id,p_email:$('#me').value,p_role:$('#mr').value}))){toast('Membre ajouté');go('net')}}
+async function setRole(u,r){if(await run(SB.from('company_members').update({role:r}).eq('company_id',C.id).eq('user_id',u)))toast('Rôle mis à jour')}
+async function rmMember(u){if(confirm('Retirer ce membre ?')&&await run(SB.from('company_members').delete().eq('company_id',C.id).eq('user_id',u))){toast('Membre retiré');go('net')}}
 </script></body></html>
