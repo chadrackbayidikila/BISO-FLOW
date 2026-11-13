@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BISO FLOW</title>
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);--nav:#0B1F3A;--tq:#14B8A6;--tqd:#0d8f81;--bg:#EEF2F6;--sf:#fff;--tx:#0f1b2d;--mu:#5d6b80;--bd:#dde4ec;--rd:#d64545;--am:#b7791f}
+@media(prefers-color-scheme:dark){:root{--bg:#0a1424;--sf:#12223b;--tx:#e8eef7;--mu:#97a6bd;--bd:#25395a}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+.hd{background:var(--nav);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;flex-wrap:wrap}
+.logo{font-weight:800;letter-spacing:.5px}.logo b{color:var(--tq)}
+.hd .mu{color:#9fb2cf;font-size:13px}
+main{max-width:900px;margin:0 auto;padding:16px 16px 90px}
+.auth{max-width:380px;margin:0 auto;padding:40px 20px}.auth .logo{font-size:22px;color:var(--tx)}
+nav.bot{position:fixed;bottom:0;left:0;right:0;background:var(--nav);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+nav.bot button{flex:1;background:none;border:0;color:#b9c7dd;padding:10px 2px;border-radius:10px;cursor:pointer;font-size:13px}
+nav.bot button.on{background:#16305a;color:#fff}
+h1{font-size:22px;margin:0 0 14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}.top h1{margin:0}
+.btn{background:var(--tq);color:#042a26;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
+.btn.g{background:var(--sf);color:var(--tx);border:1px solid var(--bd)}.btn.d{background:#fdecec;color:var(--rd)}.btn.s{padding:6px 11px;font-size:13px}
+.btn:disabled{opacity:.5}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+@media(min-width:800px){.grid{grid-template-columns:repeat(4,1fr)}}
+.kpi,.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}
+.card{margin-bottom:10px}.kpi small,.mu,.row small{color:var(--mu)}.kpi b{display:block;font-size:22px}
+.kpi.hero{grid-column:1/-1;background:var(--nav);color:#fff;border:0}.kpi.hero small{color:#9fb2cf}.kpi.hero b{font-size:30px;color:var(--tq)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+.tag{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:600;background:#e3ebf5;color:#27466e;white-space:nowrap}
+.tag.ok{background:#d6f5f0;color:#0b6b5f}.tag.w{background:#fdf0d5;color:var(--am)}.tag.x{background:#fdecec;color:var(--rd)}
+input,select,textarea{width:100%;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+label{display:block;font-size:13px;color:var(--mu);margin:10px 0 4px}
+.empty{text-align:center;color:var(--mu);padding:30px 10px}
+#ov{position:fixed;inset:0;background:rgba(5,12,24,.6);display:none;align-items:flex-end;justify-content:center;z-index:10}#ov.on{display:flex}
+#md{background:var(--sf);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+@media(min-width:800px){#ov{align-items:center}#md{border-radius:18px}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.line{display:flex;gap:8px;align-items:center;margin-bottom:6px}.line span{flex:1}.line input{width:64px;text-align:center}
+.tot{font-size:18px;font-weight:800;text-align:right;margin:10px 0}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.hist{font-size:13px;color:var(--mu);border-left:2px solid var(--bd);padding-left:10px;margin:4px 0}
+#toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--nav);color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:20;max-width:90%}
+</style></head>
+<body>
+<div id="root"><div class="empty">Chargement…</div></div>
+<div id="ov"><div id="md" role="dialog" aria-modal="true"></div></div>
+<div id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script>
+const SB=supabase.createClient('https://gxxdezyxhzvqbadxctet.supabase.co','sb_publishable_HiyA8ZnqhJTY1FK4ALIuEQ_ecHm0mUl');
+const OS={draft:'Brouillon',pending:'En attente',confirmed:'Confirmée',preparing:'En préparation',ready:'Prête',delivering:'En livraison',completed:'Terminée',cancelled:'Annulée'};
+const FL=['pending','confirmed','preparing','ready','delivering','completed'];
+const PS={unpaid:'Non payé',verifying:'En attente de vérification',paid:'Payé',partial:'Partiellement payé',refunded:'Remboursé',failed:'Échec'};
+const MT={cash:'Espèces',mobile_money:'Mobile Money',transfer:'Virement'};
+const RL={company_admin:'Administrateur',manager:'Gestionnaire',operator:'Opérateur',courier:'Livreur',customer:'Client'};
+const TABS=[['home','Accueil'],['ord','Commandes'],['cli','Clients'],['pro','Produits']];
+let U=null,C=null,R=null,tab='home',mode='in',ORD=[],q='',cart={},PRODS=[];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fm=n=>new Intl.NumberFormat('fr-FR').format(Math.round(n))+' FCFA';
+const fd=t=>new Date(t).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+const mgr=()=>R==='company_admin'||R==='manager';
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3500)}
+function modal(h){$('#md').innerHTML=h;$('#ov').classList.add('on')}
+function closeM(){$('#ov').classList.remove('on')}
+$('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeM()});
+async function run(p){const{data,error}=await p;if(error){toast(error.message);return null}return data===null?true:data}
+const stTag=s=>`<span class="tag ${s==='completed'?'ok':s==='cancelled'?'x':s==='pending'?'w':''}">${OS[s]}</span>`;
+const pTag=s=>`<span class="tag ${s==='paid'?'ok':s==='unpaid'||s==='failed'?'x':'w'}">${PS[s]}</span>`;
+/* --- démarrage et connexion --- */
+SB.auth.onAuthStateChange((e,s)=>{U=s?s.user:null;setTimeout(boot,0)});
+async function boot(){
+ if(!U){C=null;return viewAuth()}
+ const{data,error}=await SB.from('company_members').select('role,companies(id,name)').eq('user_id',U.id);
+ if(error){toast(error.message);return}
+ if(!data.length)return viewCreateCo();
+ C=data[0].companies;R=data[0].role;shell();go(tab)}
+function viewAuth(){const up=mode==='up';
+$('#root').innerHTML=`<div class="auth"><div class="logo">BISO <b>FLOW</b></div><h1 style="margin-top:20px">${up?'Créer un compte':'Connexion'}</h1>
+${up?'<label>Nom complet</label><input id="an" autocomplete="name">':''}
+<label>E-mail</label><input id="ae" type="email" autocomplete="email">
+<label>Mot de passe (8 caractères minimum)</label><input id="ap" type="password" autocomplete="${up?'new-password':'current-password'}">
+<div class="acts"><button class="btn" id="ab" onclick="doAuth()">${up?'Créer mon compte':'Se connecter'}</button></div>
+<p class="mu"><a href="#" onclick="mode='${up?'in':'up'}';viewAuth();return false" style="color:var(--tqd)">${up?'J’ai déjà un compte':'Créer un compte'}</a></p></div>`}
+async function doAuth(){const email=$('#ae').value.trim(),password=$('#ap').value,b=$('#ab');
+ if(!email||password.length<8)return toast('E-mail et mot de passe (8 caractères minimum) requis');
+ b.disabled=true;
+ if(mode==='up'){const{data,error}=await SB.auth.signUp({email,password,options:{data:{full_name:$('#an').value.trim()}}});
+  b.disabled=false;if(error)return toast(error.message);
+  if(!data.session){toast('Compte créé. Confirmez votre e-mail (vérifiez les spams), puis connectez-vous.');mode='in';viewAuth()}}
+ else{const{error}=await SB.auth.signInWithPassword({email,password});b.disabled=false;if(error)toast('Connexion impossible : '+error.message)}}
+function viewCreateCo(){$('#root').innerHTML=`<div class="auth"><div class="logo">BISO <b>FLOW</b></div><h1 style="margin-top:20px">Créer votre entreprise</h1><p class="mu">Vous en serez l’administrateur.</p><label>Nom de l’entreprise</label><input id="cn" value="YA BISO FOOD"><div class="acts"><button class="btn" onclick="createCo()">Créer</button><button class="btn g" onclick="SB.auth.signOut()">Quitter</button></div></div>`}
+async function createCo(){if(await run(SB.rpc('create_company',{p_name:$('#cn').value})))boot()}
+function shell(){$('#root').innerHTML=`<header class="hd"><span class="logo">BISO <b>FLOW</b></span><span class="mu">${esc(C.name)} · ${RL[R]}</span><button class="btn g s" onclick="SB.auth.signOut()">Quitter</button></header><main id="main"></main><nav class="bot" id="bot"></nav>`}
+async function go(t){tab=t;q='';
+ $('#bot').innerHTML=TABS.map(([k,l])=>`<button class="${tab===k?'on':''}" onclick="go('${k}')">${l}</button>`).join('');
+ $('#main').innerHTML='<div class="empty">Chargement…</div>';
+ $('#main').innerHTML=await({home:vHome,ord:vOrders,cli:vClients,pro:vProducts})[t]();window.scrollTo(0,0)}
+/* --- accueil --- */
+async function vHome(){
+ const[o,p]=await Promise.all([run(SB.from('orders').select('id,status,total')),run(SB.from('payments').select('order_id,amount,status').eq('status','confirmed'))]);
+ if(!o)return'<div class="empty">Données indisponibles.</div>';
+ const live=o.filter(x=>x.status!=='cancelled'),ids=new Set(live.map(x=>x.id));
+ const enc=(p||[]).filter(x=>ids.has(x.order_id)).reduce((a,x)=>a+ +x.amount,0);
+ const due=live.reduce((a,x)=>a+ +x.total,0)-enc,c=s=>o.filter(x=>x.status===s).length;
+ return`<h1>Tableau de bord</h1><div class="grid"><div class="kpi hero"><small>Chiffre d’affaires encaissé</small><b>${fm(enc)}</b></div>
+<div class="kpi"><small>Commandes</small><b>${o.length}</b></div><div class="kpi"><small>Paiements à recevoir</small><b>${fm(Math.max(0,due))}</b></div>
+${['pending','confirmed','preparing','delivering','completed','cancelled'].map(s=>`<div class="kpi"><small>${OS[s]}</small><b>${c(s)}</b></div>`).join('')}</div>`}
+/* --- commandes --- */
+async function vOrders(){
+ const d=await run(SB.from('orders').select('id,ref,customer_name,phone,total,status,pay_status,created_at').order('created_at',{ascending:false}).limit(300));
+ ORD=d||[];
+ return`<div class="top"><h1>Commandes</h1><button class="btn" onclick="newOrder()">+ Nouvelle</button></div><input placeholder="Rechercher (référence, nom, téléphone)" oninput="q=this.value;$('#ol').innerHTML=oList()" aria-label="Rechercher" style="margin-bottom:12px"><div id="ol">${oList()}</div>`}
+function oList(){const l=ORD.filter(o=>!q||(o.ref+o.customer_name+o.phone).toLowerCase().includes(q.toLowerCase()));
+ return l.length?l.map(o=>`<div class="card row" onclick="openOrder('${o.id}')"><span><b>${esc(o.ref)}</b> · ${esc(o.customer_name)}<br><small>${fd(o.created_at)} · ${fm(o.total)}</small></span><span style="text-align:right">${stTag(o.status)}<br>${pTag(o.pay_status)}</span></div>`).join(''):'<div class="empty">Aucune commande.</div>'}
+async function newOrder(){cart={};PRODS=(await run(SB.from('products').select('id,name,price').eq('active',true).eq('archived',false).order('name')))||[];
+ modal(`<h1>Nouvelle commande</h1><div class="two"><div><label>Nom *</label><input id="on"></div><div><label>Téléphone *</label><input id="op" inputmode="tel"></div></div><label>Adresse</label><input id="oa">
+<label>Produits</label>${PRODS.length?PRODS.map(p=>`<div class="line"><span>${esc(p.name)}<br><small class="mu">${fm(p.price)}</small></span><button class="btn g s" onclick="qty('${p.id}',-1)">−</button><input id="q${p.id}" value="0" readonly><button class="btn g s" onclick="qty('${p.id}',1)">+</button></div>`).join(''):'<p class="mu">Ajoutez d’abord des produits actifs (onglet Produits).</p>'}
+<div class="two"><div><label>Frais</label><input id="of" type="number" min="0" value="0" oninput="tt()"></div><div><label>Réduction</label><input id="od" type="number" min="0" value="0" oninput="tt()"></div></div>
+<label>Notes internes</label><textarea id="ono" rows="2"></textarea><div class="tot" id="tt">0 FCFA</div>
+<div class="acts"><button class="btn" id="sb" onclick="saveOrder()">Créer la commande</button><button class="btn g" onclick="closeM()">Annuler</button></div>`)}
+function qty(id,d){cart[id]=Math.max(0,(cart[id]||0)+d);$('#q'+id).value=cart[id];tt()}
+function tt(){const s=PRODS.reduce((a,p)=>a+ +p.price*(cart[p.id]||0),0);$('#tt').textContent=fm(Math.max(0,s+(+$('#of').value||0)-(+$('#od').value||0)))+' (estimation, le total officiel est calculé par la base)'}
+async function saveOrder(){const items=PRODS.filter(p=>cart[p.id]>0).map(p=>({product_id:p.id,qty:cart[p.id]}));
+ $('#sb').disabled=true;
+ const r=await run(SB.rpc('create_order',{p_company:C.id,p_name:$('#on').value,p_phone:$('#op').value,p_address:$('#oa').value,p_items:items,p_fee:+$('#of').value||0,p_discount:+$('#od').value||0,p_notes:$('#ono').value}));
+ if(!r){$('#sb').disabled=false;return}
+ closeM();toast('Commande créée');go('ord')}
+async function openOrder(id){
+ const[o,it,pa,hi]=await Promise.all([run(SB.from('orders').select('*').eq('id',id).single()),run(SB.from('order_items').select('name,unit_price,qty').eq('order_id',id)),run(SB.from('payments').select('*').eq('order_id',id).order('created_at')),run(SB.from('order_history').select('message,created_at').eq('order_id',id).order('created_at',{ascending:false}))]);
+ if(!o)return;
+ const i=FL.indexOf(o.status),nx=i>=0&&i<FL.length-1?FL[i+1]:null,used=(pa||[]).filter(x=>x.status!=='failed'&&x.status!=='refunded').reduce((a,x)=>a+ +x.amount,0),rest=o.total-used,open=o.status!=='cancelled';
+ modal(`<div class="top"><h1>${esc(o.ref)}</h1>${stTag(o.status)}</div>
+<p><b>${esc(o.customer_name)}</b> · <a href="tel:${esc(o.phone)}" style="color:var(--tqd)">${esc(o.phone)}</a><br><span class="mu">${esc(o.address)||'Pas d’adresse'}</span></p>
+${(it||[]).map(x=>`<div class="line"><span>${x.qty} × ${esc(x.name)}</span><b>${fm(x.unit_price*x.qty)}</b></div>`).join('')}
+${+o.fee?`<div class="line"><span>Frais</span>${fm(o.fee)}</div>`:''}${+o.discount?`<div class="line"><span>Réduction</span>− ${fm(o.discount)}</div>`:''}
+<div class="tot">${fm(o.total)}</div>
+<div class="card"><div class="row" style="cursor:default"><b>Paiement</b>${pTag(o.pay_status)}</div>
+${(pa||[]).map(p=>`<div class="line" style="margin-top:8px"><span>${fm(p.amount)} · ${MT[p.method]}${p.reference?' · '+esc(p.reference):''}<br><small class="mu">${fd(p.created_at)} · ${p.status==='pending'?'à vérifier':p.status==='confirmed'?'confirmé':'refusé'}</small></span>${p.status==='pending'&&mgr()?`<button class="btn s" onclick="rev('${p.id}',true,'${id}')">Valider</button><button class="btn d s" onclick="rev('${p.id}',false,'${id}')">Refuser</button>`:''}</div>`).join('')}
+${open&&rest>0?`<div class="two" style="margin-top:8px"><input id="pa" type="number" min="1" value="${rest}" aria-label="Montant"><select id="pm"><option value="cash">Espèces</option><option value="mobile_money">Mobile Money</option><option value="transfer">Virement</option></select></div><input id="pr" placeholder="Référence transaction (facultatif)" style="margin-top:8px"><button class="btn s" style="margin-top:8px" onclick="addPay('${id}')">Enregistrer le paiement</button>`:''}</div>
+<div class="acts">${nx?`<button class="btn" onclick="setSt('${id}','${nx}')">Passer à « ${OS[nx]} »</button>`:''}${open&&o.status!=='completed'?`<button class="btn d" onclick="if(confirm('Annuler cette commande ?'))setSt('${id}','cancelled')">Annuler</button>`:''}<button class="btn g" onclick="closeM()">Fermer</button></div>
+<h1 style="font-size:15px;margin-top:18px">Historique</h1>${(hi||[]).map(h=>`<div class="hist">${esc(h.message)} <small>· ${fd(h.created_at)}</small></div>`).join('')}`)}
+async function setSt(id,s){if(await run(SB.rpc('set_order_status',{p_order:id,p_status:s}))){openOrder(id);if(tab==='ord')go('ord')}}
+async function addPay(id){if(await run(SB.rpc('add_payment',{p_order:id,p_amount:+$('#pa').value,p_method:$('#pm').value,p_reference:$('#pr').value}))){openOrder(id);if(tab==='ord')go('ord')}}
+async function rev(pid,ok,id){if(await run(SB.rpc('confirm_payment',{p_payment:pid,p_ok:ok}))){openOrder(id);if(tab==='ord')go('ord')}}
+/* --- clients --- */
+async function vClients(){const d=await run(SB.from('customers').select('name,phone,address').eq('archived',false).order('name'));
+ return`<h1>Clients</h1>`+(d&&d.length?d.map(c=>`<div class="card"><b>${esc(c.name)}</b><br><small class="mu">${esc(c.phone)}${c.address?' · '+esc(c.address):''}</small></div>`).join(''):'<div class="empty">Aucun client. Ils sont ajoutés automatiquement à chaque commande.</div>')}
+/* --- produits --- */
+async function vProducts(){PRODS=(await run(SB.from('products').select('*').eq('archived',false).order('name')))||[];
+ return`<div class="top"><h1>Produits et services</h1>${mgr()?'<button class="btn" onclick="editP()">+ Produit</button>':''}</div>`+(PRODS.length?PRODS.map(p=>`<div class="card row" ${mgr()?`onclick="editP('${p.id}')"`:''}><span><b>${esc(p.name)}</b><br><small>${esc(p.category)||'Sans catégorie'}</small></span><span style="text-align:right"><b>${fm(p.price)}</b><br><span class="tag ${p.active?'ok':'x'}">${p.active?'Disponible':'Désactivé'}</span></span></div>`).join(''):'<div class="empty">Aucun produit. Ajoutez votre premier produit.</div>')}
+function editP(id){const p=PRODS.find(x=>x.id===id)||{name:'',category:'',price:'',active:true,description:''};
+ modal(`<h1>${id?'Modifier':'Nouveau produit'}</h1><label>Nom *</label><input id="pn" value="${esc(p.name)}"><div class="two"><div><label>Prix (FCFA) *</label><input id="pp" type="number" min="0" value="${p.price}"></div><div><label>Catégorie</label><input id="pc" value="${esc(p.category)}"></div></div><label>Description</label><textarea id="pd" rows="2">${esc(p.description)}</textarea>
+<label><input type="checkbox" id="po" ${p.active?'checked':''} style="width:auto"> Disponible à la commande</label>
+<div class="acts"><button class="btn" onclick="saveP('${id||''}')">Enregistrer</button>${id?`<button class="btn d" onclick="archP('${id}')">Archiver</button>`:''}<button class="btn g" onclick="closeM()">Fermer</button></div>`)}
+async function saveP(id){const v={name:$('#pn').value.trim(),price:+$('#pp').value,category:$('#pc').value.trim(),description:$('#pd').value.trim(),active:$('#po').checked};
+ if(!v.name||$('#pp').value==='')return toast('Nom et prix obligatoires');
+ const r=id?await run(SB.from('products').update(v).eq('id',id)):await run(SB.from('products').insert({...v,company_id:C.id}));
+ if(r){closeM();toast('Produit enregistré');go('pro')}}
+async function archP(id){if(confirm('Archiver ce produit ?')&&await run(SB.from('products').update({archived:true}).eq('id',id))){closeM();go('pro')}}
+</script></body></html>
