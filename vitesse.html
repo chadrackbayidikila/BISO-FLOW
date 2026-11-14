@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test de vitesse</title>
+<style>body{font-family:system-ui,sans-serif;background:#0a1424;color:#e8eef7;padding:20px;font-size:16px}
+.r{background:#12223b;border-radius:10px;padding:12px;margin:10px 0}b{color:#14B8A6}
+button{background:#14B8A6;border:0;border-radius:10px;padding:12px 18px;font-weight:700;font-size:16px}</style></head>
+<body><h2>Test de vitesse BISO FLOW</h2>
+<button id="b" onclick="go()">Lancer le test</button><div id="o"></div>
+<script>
+const K='sb_publishable_HiyA8ZnqhJTY1FK4ALIuEQ_ecHm0mUl';
+const T=[
+['Votre site (GitHub)',location.origin+'/BISO-FLOW/app.html',{}],
+['Base de données (Supabase)','https://gxxdezyxhzvqbadxctet.supabase.co/auth/v1/health',{headers:{apikey:K}}],
+['Bibliothèque via jsDelivr','https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js',{}],
+['Bibliothèque via unpkg','https://unpkg.com/@supabase/supabase-js@2.57.4/dist/umd/supabase.js',{}]];
+async function go(){
+ const o=document.getElementById('o'),b=document.getElementById('b');b.disabled=true;o.innerHTML='';
+ for(const [n,u,opt] of T){
+  const d=document.createElement('div');d.className='r';d.textContent=n+' : en cours…';o.appendChild(d);
+  const c=new AbortController(),to=setTimeout(()=>c.abort(),60000),t=performance.now();
+  try{const r=await fetch(u+(u.includes('?')?'&':'?')+'t='+Date.now(),{...opt,cache:'no-store',signal:c.signal});
+   await r.arrayBuffer();d.innerHTML=n+' : <b>'+Math.round(performance.now()-t)+' ms</b> (code '+r.status+')'}
+  catch(e){d.innerHTML=n+' : <b>échec après '+Math.round((performance.now()-t)/1000)+' s</b>'}
+  clearTimeout(to)}
+ b.disabled=false}
+</script></body></html>
