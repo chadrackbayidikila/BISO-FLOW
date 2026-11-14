@@ -254,4 +254,4 @@ async function bEq(){const d=await run(SB.rpc('list_members',{p_company:C.id}));
 async function addMember(){if(await run(SB.rpc('add_member',{p_company:C.id,p_email:$('#me').value,p_role:$('#mr').value}))){toast('Membre ajouté');go('net')}}
 async function setRole(u,r){if(await run(SB.from('company_members').update({role:r}).eq('company_id',C.id).eq('user_id',u)))toast('Rôle mis à jour')}
 async function rmMember(u){if(confirm('Retirer ce membre ?')&&await run(SB.from('company_members').delete().eq('company_id',C.id).eq('user_id',u))){toast('Membre retiré');go('net')}}
-</script></body></html>
+</script><script src="extras.js"></script></body></html>
